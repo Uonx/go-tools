@@ -13,21 +13,23 @@ type ChromeDriver struct {
 	DebuggerAddr string
 	DriverPort   int
 	DriverAddr   string
+	DriverPath   string
 }
 
-func NewChromeDriver(browserName, browserPath, debuggerAddr, driverAddr string, driverPort int) ChromeDriver {
+func NewChromeDriver(browserName, browserPath, debuggerAddr, driverPath, driverAddr string, driverPort int) ChromeDriver {
 	return ChromeDriver{
 		BrowserName:  browserName,
 		BrowserPath:  browserPath,
 		DebuggerAddr: debuggerAddr,
 		DriverAddr:   driverAddr,
 		DriverPort:   driverPort,
+		DriverPath:   driverPath,
 	}
 }
 
 func (c *ChromeDriver) StartChrome() (*selenium.Service, error) {
 	opts := []selenium.ServiceOption{}
-	return selenium.NewChromeDriverService(c.DriverAddr, c.DriverPort, opts...)
+	return selenium.NewChromeDriverService(c.DriverPath, c.DriverPort, opts...)
 }
 
 func (c *ChromeDriver) WebDriver() (selenium.WebDriver, error) {
