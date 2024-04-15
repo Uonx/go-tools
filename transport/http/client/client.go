@@ -77,7 +77,11 @@ func (h *HttpSend) send() ([]byte, error) {
 			Proxy: http.ProxyURL(proxyURL),
 		}
 	case "socks5":
-		dialer, err := proxy.SOCKS5("tcp", h.proxy, nil, proxy.Direct)
+		proxyURL, err := url.Parse(h.proxy)
+		if err != nil {
+			return nil, err
+		}
+		dialer, err := proxy.FromURL(proxyURL, proxy.Direct)
 		if err != nil {
 			return nil, err
 		}
