@@ -7,20 +7,23 @@ import (
 	"net/url"
 	"strings"
 	"time"
+
+	"golang.org/x/net/proxy"
 )
 
 type HttpSend struct {
-	proxy       string
-	link        string
-	method_type string
-	header      map[string]string
-	body        string
+	proxy      string
+	proxyType  string
+	link       string
+	methodType string
+	header     map[string]string
+	body       string
 }
 
 func NewHttpSend(link string) HttpSend {
 	return HttpSend{
-		link:        link,
-		method_type: http.MethodGet,
+		link:       link,
+		methodType: http.MethodGet,
 	}
 }
 
@@ -32,11 +35,15 @@ func (h *HttpSend) SetProxy(proxy string) {
 	h.proxy = proxy
 }
 
+func (h *HttpSend) SetProxyType(proxyType string) {
+	h.proxyType = proxyType
+}
+
 func (h *HttpSend) SetHeader(header map[string]string) {
 	h.header = header
 }
 func (h *HttpSend) SetMethod(method string) {
-	h.method_type = method
+	h.methodType = method
 }
 
 func (h *HttpSend) Do() ([]byte, error) {
@@ -59,17 +66,29 @@ func (h *HttpSend) send() ([]byte, error) {
 	client = http.Client{
 		Timeout: 60 * time.Second,
 	}
-	if len(h.proxy) > 0 {
-		uri, err := url.Parse(h.proxy)
+
+	switch h.proxyType {
+	case "http":
+		proxyURL, err := url.Parse(h.proxy)
 		if err != nil {
 			return nil, err
 		}
 		client.Transport = &http.Transport{
-			Proxy: http.ProxyURL(uri),
+			Proxy: http.ProxyURL(proxyURL),
 		}
+	case "socks5":
+		dialer, err := proxy.SOCKS5("tcp", h.proxy, nil, proxy.Direct)
+		if err != nil {
+			return nil, err
+		}
+		client.Transport = &http.Transport{
+			Dial: dialer.Dial,
+		}
+	default:
+		return nil, fmt.Errorf("unsupported proxy type: %s", h.proxyType)
 	}
 
-	req, err = http.NewRequest(h.method_type, h.link, strings.NewReader(send_data))
+	req, err = http.NewRequest(h.methodType, h.link, strings.NewReader(send_data))
 	if err != nil {
 		return nil, err
 	}
