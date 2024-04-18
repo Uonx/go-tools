@@ -88,8 +88,8 @@ func (h *HttpSend) send() ([]byte, error) {
 		client.Transport = &http.Transport{
 			Dial: dialer.Dial,
 		}
-	default:
-		return nil, fmt.Errorf("unsupported proxy type: %s", h.proxyType)
+		// default:
+		// return nil, fmt.Errorf("unsupported proxy type: %s", h.proxyType)
 	}
 
 	req, err = http.NewRequest(h.methodType, h.link, strings.NewReader(send_data))
