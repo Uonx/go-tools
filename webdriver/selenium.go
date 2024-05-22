@@ -35,6 +35,9 @@ func (c *ChromeDriver) StartChrome() (*selenium.Service, error) {
 func (c *ChromeDriver) WebDriver() (selenium.WebDriver, error) {
 	caps := selenium.Capabilities{
 		"browserName": c.BrowserName,
+		"goog:loggingPrefs": map[string]interface{}{
+			"performance": "ALL",
+		},
 	}
 
 	chromeCaps := chrome.Capabilities{}
