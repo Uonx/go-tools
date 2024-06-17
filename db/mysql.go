@@ -2,6 +2,7 @@ package db
 
 import (
 	"fmt"
+	"log"
 	"time"
 
 	"gorm.io/driver/mysql"
@@ -33,7 +34,7 @@ func NewMysqlClient(mysqlOpts *MysqlOpts) (*gorm.DB, error) {
 		mysqlOpts.Endpoint,
 		mysqlOpts.Database,
 	)
-
+	log.Println(dsn)
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
 		NamingStrategy: schema.NamingStrategy{
 			SingularTable: true,
@@ -41,7 +42,7 @@ func NewMysqlClient(mysqlOpts *MysqlOpts) (*gorm.DB, error) {
 	})
 
 	if err != nil {
-		return nil, fmt.Errorf("Could not connect to the database")
+		return nil, fmt.Errorf("Could not connect to the database %v", err)
 	}
 
 	sqlDB, _ := db.DB()

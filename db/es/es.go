@@ -10,7 +10,6 @@ type EsOpts struct {
 	Endpoint string
 	Username string
 	Password string
-	Database int
 }
 
 var esClient *elastic.Client
@@ -23,8 +22,10 @@ func Es() *elastic.Client {
 	return esClient
 }
 
-func NewRedisClient(esOpts *EsOpts) error {
-	client, err := elastic.NewClient(elastic.SetBasicAuth(esOpts.Username, esOpts.Password), elastic.SetURL(strings.Split(esOpts.Endpoint, ";")...))
+func NewEsClient(esOpts *EsOpts) error {
+	client, err := elastic.NewClient(elastic.SetBasicAuth(esOpts.Username, esOpts.Password),
+		elastic.SetURL(strings.Split(esOpts.Endpoint, ";")...),
+		elastic.SetSniff(false))
 	if err != nil {
 		return err
 	}
