@@ -22,6 +22,14 @@ func (c convert) Int(s string) int {
 	return i
 }
 
+func (c convert) Int64(s string) int64 {
+	i, err := strconv.ParseInt(s, 10, 64)
+	if err != nil {
+		return 0
+	}
+	return i
+}
+
 func (c convert) Json(a any) string {
 	str, err := json.Marshal(a)
 	if err != nil {

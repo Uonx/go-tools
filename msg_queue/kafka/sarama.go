@@ -33,7 +33,7 @@ func (s *Sarama) init() {
 	config := sarama.NewConfig()
 	config.Producer.RequiredAcks = sarama.WaitForLocal
 	config.Producer.Return.Successes = true
-	config.Consumer.Offsets.Initial = sarama.OffsetOldest
+	config.Consumer.Offsets.Initial = sarama.OffsetNewest
 	config.Consumer.Group.Rebalance.Strategy = sarama.NewBalanceStrategyRange()
 	config.Consumer.Group.Session.Timeout = 10 * time.Second
 	config.Consumer.Fetch.Max = 10
